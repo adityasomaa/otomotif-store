@@ -257,7 +257,7 @@ export function CatalogBrowser({
                 Pilih kendaraan supaya katalog hanya menampilkan barang yang cocok.
               </p>
               <div className="mt-4">
-                <VehiclePicker rapat />
+                <VehiclePicker />
               </div>
             </div>
           )}

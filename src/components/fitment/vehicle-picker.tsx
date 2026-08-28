@@ -25,11 +25,9 @@ type Props = {
   /** Dipanggil setelah kendaraan lengkap dipilih. */
   onTerapkan?: () => void;
   className?: string;
-  /** Susunan kolom di layar lebar. */
-  rapat?: boolean;
 };
 
-export function VehiclePicker({ diAtasGelap = false, onTerapkan, className = "", rapat = false }: Props) {
+export function VehiclePicker({ diAtasGelap = false, onTerapkan, className = "" }: Props) {
   const { kendaraan, pilih, siap } = useKendaraan();
 
   const [merek, setMerek] = useState<string | null>(null);
@@ -86,15 +84,18 @@ export function VehiclePicker({ diAtasGelap = false, onTerapkan, className = "",
     }
   };
 
-  /* Di layar sempit merek dan model berdampingan, tahun mengambil satu baris
-     penuh. Susunan ini menghemat satu baris tinggi, yang menentukan apakah
+  /* Susunannya mengikuti lebar WADAHNYA, bukan lebar layar.
+     Ini penting karena pemilih yang sama dipakai di dua tempat yang jauh
+     berbeda lebarnya: panel hero yang selebar halaman, dan kolom samping
+     halaman produk yang sempit. Kalau memakai ukuran layar, tiga dropdown
+     akan dipaksa berdampingan di kolom sempit dan tulisannya terpotong.
+
+     Di wadah sempit: merek dan model berdampingan, tahun satu baris penuh.
+     Susunan itu juga menghemat satu baris tinggi, yang menentukan apakah
      hero masih muat dalam satu layar di ponsel. */
   return (
-    <div
-      className={`grid grid-cols-2 gap-3 sm:gap-3.5 ${
-        rapat ? "sm:grid-cols-3" : "sm:grid-cols-2 lg:grid-cols-3"
-      } ${className}`}
-    >
+    <div className={`@container w-full ${className}`}>
+      <div className="grid grid-cols-2 gap-3 @2xl:grid-cols-3 @2xl:gap-3.5">
       <Dropdown
         label="Merek"
         pilihan={opsiMerek}
@@ -113,17 +114,18 @@ export function VehiclePicker({ diAtasGelap = false, onTerapkan, className = "",
         nonaktif={!merek}
         diAtasGelap={diAtasGelap}
       />
-      <div className="col-span-2 sm:col-span-1">
-        <Dropdown
-          label="Tahun"
-          pilihan={opsiTahun}
-          nilai={tahun ? String(tahun) : null}
-          onPilih={gantiTahun}
-          placeholder="Pilih tahun"
-          pesanKosong="Pilih model dulu"
-          nonaktif={!model}
-          diAtasGelap={diAtasGelap}
-        />
+        <div className="col-span-2 @2xl:col-span-1">
+          <Dropdown
+            label="Tahun"
+            pilihan={opsiTahun}
+            nilai={tahun ? String(tahun) : null}
+            onPilih={gantiTahun}
+            placeholder="Pilih tahun"
+            pesanKosong="Pilih model dulu"
+            nonaktif={!model}
+            diAtasGelap={diAtasGelap}
+          />
+        </div>
       </div>
     </div>
   );

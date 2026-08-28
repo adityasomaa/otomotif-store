@@ -208,7 +208,7 @@ export function ProductDetail({ produk }: { produk: Produk }) {
                     Pilih kendaraan Anda dulu supaya bisa dicek apakah barang ini muat.
                   </p>
                   <div className="mt-4">
-                    <VehiclePicker rapat />
+                    <VehiclePicker />
                   </div>
                 </>
               ) : (

@@ -43,7 +43,7 @@ export function FitmentChecker() {
           </h2>
         </div>
         <div className="p-5">
-          <VehiclePicker rapat />
+          <VehiclePicker />
           {siap && kendaraan && (
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <p className="text-[0.9rem]">

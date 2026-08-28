@@ -77,7 +77,7 @@ export function Hero() {
           </div>
 
           <div className="mt-3.5 sm:mt-5">
-            <VehiclePicker diAtasGelap rapat />
+            <VehiclePicker diAtasGelap />
           </div>
 
           <form onSubmit={cari} className="mt-3 flex gap-2.5 sm:mt-4 sm:gap-3">

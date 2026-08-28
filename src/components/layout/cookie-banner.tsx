@@ -66,51 +66,58 @@ export function CookieBanner() {
   if (!tampil) return null;
 
   return (
-    /* pointer-events-none di wadah, pointer-events-auto di kartunya. */
+    /* pointer-events-none di wadah, pointer-events-auto di kartunya.
+       Kartunya sengaja dibuat ringkas dan menempel di sudut kiri bawah, bukan
+       melebar penuh, karena bagian bawah layar depan berisi pemilih kendaraan
+       dan kolom pencarian. Banner yang tinggi akan menutupi justru alat yang
+       paling dibutuhkan pengunjung. */
     <div className="layer-cookie pointer-events-none fixed inset-x-0 bottom-0 p-3 sm:p-4">
       <div
         ref={kartuRef}
         role="region"
         aria-label="Pengaturan penyimpanan di peramban"
-        className="pointer-events-auto mx-auto w-full max-w-3xl border border-ink bg-panel p-4 shadow-[0_16px_40px_rgba(20,22,26,0.18)] sm:p-5"
+        className="pointer-events-auto w-full max-w-[30rem] border border-ink bg-panel p-3.5 shadow-[0_16px_40px_rgba(20,22,26,0.18)] sm:p-4"
       >
-        <p className="eyebrow text-ink-2">Penyimpanan di peramban</p>
-        <p className="mt-2 text-[0.9rem] leading-relaxed text-ink">
-          Situs ini menyimpan isi keranjang di peramban supaya belanja bisa dilanjutkan. Pilihan kendaraan
-          juga bisa diingat kalau diizinkan. Tidak ada pelacak pihak ketiga di situs ini.
+        <p className="text-[0.84rem] leading-snug text-ink">
+          Situs ini menyimpan keranjang dan pilihan kendaraan di peramban Anda. Tidak ada pelacak pihak
+          ketiga.
         </p>
 
         {rinciTerbuka && (
-          <dl className="mt-4 grid gap-3 border-t border-rule pt-4 text-[0.85rem]">
+          <dl className="mt-3 grid gap-2.5 border-t border-rule pt-3 text-[0.8rem]">
             <div>
               <dt className="font-medium">Wajib, tidak bisa dimatikan</dt>
               <dd className="mt-0.5 text-ink-2">
-                Isi keranjang belanja dan catatan pilihan Anda di banner ini. Tanpa keduanya, toko tidak
-                bisa dipakai berbelanja.
+                Isi keranjang dan catatan pilihan Anda di banner ini.
               </dd>
             </div>
             <div>
               <dt className="font-medium">Preferensi, bisa dimatikan</dt>
               <dd className="mt-0.5 text-ink-2">
-                Mengingat kendaraan yang Anda pilih antar kunjungan. Kalau ditolak, pilihan kendaraan hanya
-                bertahan selama tab ini masih terbuka.
+                Mengingat kendaraan antar kunjungan. Kalau ditolak, pilihan hanya bertahan selama tab ini
+                terbuka.
               </dd>
+            </div>
+            <div>
+              <TransitionLink href="/privacy" className="underline underline-offset-4 hover:text-ink">
+                Kebijakan Privasi
+              </TransitionLink>
             </div>
           </dl>
         )}
 
-        <div className="mt-4 flex flex-wrap items-center gap-2.5">
+        <div className="mt-3 flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={() => simpanPilihan(true)}
-            className="inline-flex h-11 items-center bg-ink px-5 text-[0.85rem] font-medium text-chalk transition-colors hover:bg-accent hover:text-ink"
+            className="inline-flex h-10 items-center bg-ink px-4 text-[0.82rem] font-medium text-chalk transition-colors hover:bg-accent hover:text-ink"
           >
             Izinkan semua
           </button>
           <button
             type="button"
             onClick={() => simpanPilihan(false)}
-            className="inline-flex h-11 items-center border border-ink px-5 text-[0.85rem] font-medium transition-colors hover:bg-ink hover:text-chalk"
+            className="inline-flex h-10 items-center border border-ink px-4 text-[0.82rem] font-medium transition-colors hover:bg-ink hover:text-chalk"
           >
             Hanya yang wajib
           </button>
@@ -118,16 +125,10 @@ export function CookieBanner() {
             type="button"
             onClick={() => setRinciTerbuka((s) => !s)}
             aria-expanded={rinciTerbuka}
-            className="inline-flex h-11 items-center px-2 text-[0.82rem] text-ink-2 underline underline-offset-4 hover:text-ink"
+            className="ml-auto inline-flex h-10 items-center px-1 text-[0.8rem] text-ink-2 underline underline-offset-4 hover:text-ink"
           >
-            {rinciTerbuka ? "Tutup rincian" : "Lihat rincian"}
+            {rinciTerbuka ? "Tutup" : "Rincian"}
           </button>
-          <TransitionLink
-            href="/privacy"
-            className="inline-flex h-11 items-center px-2 text-[0.82rem] text-ink-2 underline underline-offset-4 hover:text-ink"
-          >
-            Kebijakan Privasi
-          </TransitionLink>
         </div>
       </div>
     </div>
