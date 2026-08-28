@@ -110,7 +110,7 @@ export function VehiclePicker({ diAtasGelap = false, onTerapkan, className = "" 
         nilai={model}
         onPilih={gantiModel}
         placeholder="Pilih model"
-        pesanKosong="Pilih merek dulu"
+        pesanKosong="Merek dulu"
         nonaktif={!merek}
         diAtasGelap={diAtasGelap}
       />
@@ -121,7 +121,7 @@ export function VehiclePicker({ diAtasGelap = false, onTerapkan, className = "" 
             nilai={tahun ? String(tahun) : null}
             onPilih={gantiTahun}
             placeholder="Pilih tahun"
-            pesanKosong="Pilih model dulu"
+            pesanKosong="Model dulu"
             nonaktif={!model}
             diAtasGelap={diAtasGelap}
           />
