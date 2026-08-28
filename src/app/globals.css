@@ -1,0 +1,495 @@
+@import "tailwindcss";
+
+/* ============================================================================
+ * TOKEN
+ * Semua warna, jarak, dan urutan lapisan didefinisikan sekali di sini.
+ * Rasio kontras tiap pasangan warna sudah diperiksa terhadap WCAG AA (4.5:1
+ * untuk teks, 3:1 untuk garis batas komponen yang bisa diklik).
+ * ========================================================================== */
+@theme {
+  /* -- Warna: permukaan terang ("kertas teknis") -- */
+  --color-paper: #f4f3ef;
+  --color-panel: #ffffff;
+  --color-ink: #14161a; /* 16.31:1 di atas paper */
+  --color-ink-2: #545a63; /* 6.26:1 di atas paper */
+  --color-rule: #d9d7d0; /* garis dekoratif, bukan teks, bukan batas kontrol */
+  --color-control: #8e8a80; /* batas kontrol interaktif, 3.10:1 di atas paper */
+
+  /* -- Warna: permukaan gelap ("panel instrumen") -- */
+  --color-deep: #0d0f12;
+  --color-deep-2: #191c21;
+  --color-chalk: #f4f3ef; /* 17.29:1 di atas deep */
+  --color-chalk-2: #a9b0ba; /* 8.78:1 di atas deep */
+  --color-control-deep: #606771; /* 3.36:1 di atas deep */
+
+  /* -- Aksen tunggal (oranye sinyal) --
+     accent  : hanya untuk bidang isian dan grafik, JANGAN dipakai sebagai teks
+               di atas permukaan terang (rasionya cuma 2.81:1).
+     accent-ink : versi teks di atas permukaan terang (5.40:1).
+     Teks di atas bidang accent selalu memakai ink (5.81:1), bukan putih. */
+  --color-accent: #ff5a1f;
+  --color-accent-ink: #b23a0b;
+  --color-accent-soft: #ffe9df;
+
+  /* -- Status stok. Selalu dipasangkan dengan label teks, tidak pernah
+        dibedakan lewat warna saja. -- */
+  --color-ok: #14663d;
+  --color-ok-bg: #e3f2e9;
+  --color-warn: #7a4e00;
+  --color-warn-bg: #fbf0da;
+  --color-off: #5e646c;
+  --color-off-bg: #ecebe6;
+
+  /* -- Huruf -- */
+  --font-sans: var(--font-neue), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "Menlo", monospace;
+
+  /* -- Lengkung. Arah desainnya tegas dan teknis, jadi sudutnya rapat. -- */
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --radius-md: 3px;
+}
+
+/* ----------------------------------------------------------------------------
+ * SKALA Z-INDEX
+ * Satu-satunya sumber urutan lapisan. Tidak ada angka z-index mentah di mana
+ * pun dalam kode. Urutan dari bawah ke atas:
+ *   konten < header lengket < bar keranjang melayang < panel filter <
+ *   menu mobile < drawer keranjang dan modal < cookie banner <
+ *   tirai transisi < skip link
+ * -------------------------------------------------------------------------- */
+:root {
+  --z-content: 1;
+  --z-header: 100;
+  --z-cartbar: 200;
+  --z-filter: 300;
+  --z-menu: 400;
+  --z-overlay: 500;
+  --z-cookie: 600;
+  --z-curtain: 650;
+  --z-skip: 900;
+
+  --header-h: 60px;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --header-h: 72px;
+  }
+}
+
+/* ============================================================================
+ * Semua CSS tulisan tangan hidup di dalam @layer supaya tidak pernah menimpa
+ * utility Tailwind. Tailwind sendiri mendaftarkan base < components < utilities.
+ * ========================================================================== */
+
+@layer base {
+  * {
+    border-color: var(--color-rule);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* Tidak pernah menggeser halaman ke samping. */
+    overflow-x: hidden;
+  }
+
+  /* Angka pada tabel dan harga selalu selebar sama supaya kolom tidak goyang. */
+  table,
+  [data-tabular] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .on-deep :focus-visible {
+    outline-color: var(--color-chalk);
+  }
+
+  /* Kunci scroll saat drawer, panel filter, menu, atau modal terbuka. */
+  body[data-scroll-lock="true"] {
+    overflow: hidden;
+    /* touch-action mencegah scroll di balik overlay pada perangkat sentuh. */
+    touch-action: none;
+  }
+}
+
+@layer components {
+  /* -- Lapisan. Dipakai sebagai ganti angka z-index mentah. -- */
+  .layer-content {
+    z-index: var(--z-content);
+  }
+  .layer-header {
+    z-index: var(--z-header);
+  }
+  .layer-cartbar {
+    z-index: var(--z-cartbar);
+  }
+  .layer-filter {
+    z-index: var(--z-filter);
+  }
+  .layer-menu {
+    z-index: var(--z-menu);
+  }
+  .layer-overlay {
+    z-index: var(--z-overlay);
+  }
+  .layer-cookie {
+    z-index: var(--z-cookie);
+  }
+  .layer-curtain {
+    z-index: var(--z-curtain);
+  }
+  .layer-skip {
+    z-index: var(--z-skip);
+  }
+
+  /* -- Lebar isi halaman -- */
+  .shell {
+    width: 100%;
+    max-width: 1400px;
+    margin-inline: auto;
+    padding-inline: 20px;
+  }
+  @media (min-width: 768px) {
+    .shell {
+      padding-inline: 32px;
+    }
+  }
+  @media (min-width: 1280px) {
+    .shell {
+      padding-inline: 48px;
+    }
+  }
+
+  /* --------------------------------------------------------------------------
+   * JUDUL
+   * Batas jumlah baris diatur per lebar layar lewat ukuran huruf dan max-width,
+   * bukan lewat pemenggalan baris manual yang sama untuk semua layar.
+   *   ponsel  : boleh sampai 3 baris
+   *   tablet  : cukup 2 baris
+   *   desktop : idealnya 1 baris
+   * ------------------------------------------------------------------------ */
+  .h-display,
+  .h-section,
+  .h-sub {
+    text-wrap: balance;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+    font-weight: 500;
+  }
+
+  .h-display {
+    font-size: clamp(2rem, 8.4vw, 2.9rem);
+    max-width: 15ch;
+  }
+  .h-section {
+    font-size: clamp(1.65rem, 6.6vw, 2.3rem);
+    max-width: 16ch;
+  }
+  .h-sub {
+    font-size: clamp(1.25rem, 4.6vw, 1.6rem);
+    line-height: 1.1;
+    max-width: 20ch;
+  }
+
+  @media (min-width: 768px) {
+    .h-display {
+      font-size: clamp(2.9rem, 5.1vw, 3.9rem);
+      max-width: 24ch;
+    }
+    .h-section {
+      font-size: clamp(2.3rem, 4.1vw, 3rem);
+      max-width: 26ch;
+    }
+    .h-sub {
+      font-size: 1.7rem;
+      max-width: 34ch;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .h-display {
+      font-size: clamp(3.7rem, 4.3vw, 4.9rem);
+      max-width: 42ch;
+      line-height: 0.98;
+    }
+    .h-section {
+      font-size: clamp(2.9rem, 3.2vw, 3.6rem);
+      max-width: 44ch;
+    }
+    .h-sub {
+      font-size: 1.9rem;
+      max-width: 48ch;
+    }
+  }
+
+  /* -- Label kecil bergaya lembar spesifikasi -- */
+  .eyebrow {
+    font-size: 0.6875rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* -- Garis ukur: satu hairline dengan siku di ujungnya, dipakai sebagai
+        pemisah bagian. Menggantikan tekstur bintik sebagai penanda kedalaman. -- */
+  .rule-tick {
+    position: relative;
+    height: 1px;
+    background: var(--color-rule);
+  }
+  .rule-tick::before,
+  .rule-tick::after {
+    content: "";
+    position: absolute;
+    top: -3px;
+    width: 1px;
+    height: 7px;
+    background: var(--color-rule);
+  }
+  .rule-tick::before {
+    left: 0;
+  }
+  .rule-tick::after {
+    right: 0;
+  }
+
+  /* -- Kisi teknis halus. Garis, bukan bintik. -- */
+  .grid-field {
+    background-image:
+      linear-gradient(to right, color-mix(in srgb, var(--color-rule) 55%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--color-rule) 55%, transparent) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+  .grid-field-deep {
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.06) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  /* -- Wadah yang boleh menggeser sendiri ke samping.
+        Dipakai untuk tabel kecocokan kendaraan di halaman produk. -- */
+  .scroll-x {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+
+  /* -- Honeypot form. Memakai clip, bukan posisi -9999px, supaya tidak
+        pernah menciptakan lebar halaman berlebih ketika tidak ada
+        positioned ancestor. -- */
+  .honeypot {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* -- Muncul saat masuk viewport. Dipakai HANYA pada elemen yang induknya
+        tidak overflow-hidden, supaya rasio IntersectionObserver tidak nol. -- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition:
+      opacity 620ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .reveal[data-shown="true"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+}
+
+/* Lenis: hanya aktif kalau kelasnya dipasang oleh skrip. */
+@layer components {
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+}
+
+/* ============================================================================
+ * TIRAI TRANSISI DAN LAYAR PEMBUKA
+ * Gerakan hanya memakai transform, jadi tidak memaksa halaman dihitung ulang.
+ * ========================================================================== */
+@layer components {
+  .curtain {
+    position: fixed;
+    inset: 0;
+    background: var(--color-deep);
+    color: var(--color-chalk);
+    transform: translateY(100%);
+    will-change: transform;
+  }
+
+  /* Layar pembuka sudah menutupi layar sejak gambar pertama. */
+  .curtain[data-fase="awal"] {
+    transform: translateY(0);
+    transition: none;
+  }
+  .curtain[data-fase="menutup"] {
+    transform: translateY(0);
+    transition: transform 560ms cubic-bezier(0.76, 0, 0.24, 1);
+  }
+  .curtain[data-fase="membuka"] {
+    transform: translateY(-100%);
+    transition: transform 620ms cubic-bezier(0.76, 0, 0.24, 1);
+  }
+  /* Saat diam, tirai diparkir kembali di bawah layar tanpa animasi, siap
+     dipakai lagi. Perpindahan posisinya terjadi di luar layar. */
+  .curtain[data-fase="diam"] {
+    transform: translateY(100%);
+    transition: none;
+    visibility: hidden;
+  }
+
+  .curtain-inner {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+  }
+
+  /* -- Varian layar pembuka -- */
+  .curtain-home {
+    display: grid;
+    justify-items: center;
+    gap: 22px;
+    width: min(420px, 100%);
+  }
+  .curtain-mark {
+    color: var(--color-chalk);
+  }
+  .curtain-wordmark {
+    font-size: clamp(1.5rem, 7vw, 2rem);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    text-align: center;
+  }
+  .curtain-meter {
+    width: 100%;
+    display: grid;
+    gap: 8px;
+  }
+  .curtain-meter-track {
+    height: 3px;
+    background: rgb(255 255 255 / 0.16);
+    overflow: hidden;
+  }
+  .curtain-meter-fill {
+    height: 100%;
+    background: var(--color-accent);
+    transform-origin: left center;
+    transition: transform 120ms linear;
+  }
+  .curtain-ticks {
+    display: flex;
+    justify-content: space-between;
+  }
+  .curtain-ticks span {
+    width: 1px;
+    height: 4px;
+    background: rgb(255 255 255 / 0.24);
+  }
+  .curtain-ticks span[data-besar="true"] {
+    height: 8px;
+    background: rgb(255 255 255 / 0.45);
+  }
+  .curtain-count {
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    color: var(--color-chalk-2);
+    text-align: right;
+  }
+
+  /* -- Varian perpindahan halaman -- */
+  .curtain-page {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .curtain-bar {
+    width: clamp(40px, 12vw, 72px);
+    height: 2px;
+    background: rgb(255 255 255 / 0.3);
+  }
+  .curtain-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--color-accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .curtain[data-fase="menutup"],
+    .curtain[data-fase="membuka"] {
+      transition: none;
+    }
+    .curtain-meter-fill {
+      transition: none;
+    }
+  }
+}
+
+/* ============================================================================
+ * BAR KERANJANG MELAYANG vs COOKIE BANNER
+ * Skala z-index menaruh cookie banner di atas bar keranjang. Supaya banner
+ * tidak pernah menutupi tombolnya di layar kecil, barnya naik setinggi banner.
+ * ========================================================================== */
+@layer components {
+  .cart-bar {
+    bottom: 0;
+    transition: bottom 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  :root[data-cookie="tampil"] .cart-bar {
+    bottom: var(--cookie-h, 0px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cart-bar {
+      transition: none;
+    }
+  }
+}
