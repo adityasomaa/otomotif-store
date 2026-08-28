@@ -310,3 +310,48 @@ npm run graphics   # membuat ulang seluruh SVG placeholder
 
 Menu utama berisi lima halaman: Home, Katalog, Cek Kecocokan, Cek Pesanan,
 Kontak. Keranjang menjadi ikon di header, bukan item menu.
+
+---
+
+## 12. Hasil verifikasi di produksi
+
+Diperiksa langsung terhadap `https://otomotif.onyxcreative.asia` dengan Chrome
+headless, bukan hanya di komputer sendiri.
+
+**Halaman dan aset**
+
+| Pemeriksaan | Hasil |
+|---|---|
+| Status semua route yang diuji | 200, dan alamat yang tidak ada menjawab 404 |
+| Gambar rusak | 0 |
+| Permintaan jaringan gagal | 0 |
+| Galat console | 0 |
+| Overflow horizontal di 375, 768, dan 1440 | 0 di ketiga lebar |
+| Judul melebihi batas baris per lebar layar | 0 |
+| Hero muat satu layar | 752 / 964 / 828 px, tepat setinggi layar dikurangi header |
+
+**Sistem kecocokan kendaraan dan alur belanja** — 22 dari 22 pemeriksaan lulus,
+antara lain: katalog tersaring dari 31 menjadi 26 produk setelah memilih Toyota
+Avanza 2019; pilihan kendaraan bertahan saat pindah halaman; halaman produk
+menandai cocok, tidak cocok, dan cocok untuk semua kendaraan dengan benar;
+mengganti merek mengosongkan model dan tahun; drawer keranjang mengunci lalu
+melepas scroll halaman; alur checkout berjalan sampai layar konfirmasi dan
+menghasilkan kode pesanan yang bisa dibuka lagi di halaman Cek Pesanan.
+
+**Struktur, mobile, dan SEO** — 11 dari 11 pemeriksaan lulus: hamburger membuka
+dan menutup menu beserta kunci scroll; panel filter mobile berperilaku sama;
+data terstruktur Product dan BreadcrumbList terbaca dan tidak memuat rating atau
+ulasan karangan; canonical benar; sitemap berisi 43 alamat termasuk seluruh 31
+halaman produk dan 5 halaman kategori, tanpa halaman keranjang dan checkout.
+
+**Sisir keamanan** — nol kunci API di seluruh kode, nol kolom yang meminta data
+kartu, nol berkas `.env` yang ikut ter-commit, dan nol angka z-index mentah di
+luar token `globals.css`.
+
+**Yang belum terlihat mata.** Browser pane di lingkungan kerja ini tidak
+menggambar frame, jadi seluruh gerakan (layar pembuka, tirai transisi antar
+halaman, papan split flap, dan animasi muncul saat digulir) belum pernah dilihat
+berjalan sebagai gerakan. Yang sudah diperiksa adalah keadaan akhirnya lewat
+DOM: nilai `data-fase` tirai, kunci scroll saat lapisan terbuka, label
+aksesibilitas papan split flap, dan tangkapan layar hasil render sungguhan.
+Timing dan kehalusan gerakannya perlu Anda lihat sendiri sekali di peramban.
